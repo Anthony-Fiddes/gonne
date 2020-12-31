@@ -84,8 +84,8 @@ func NewFromSlice(data []float64, rows, cols int) Matrix {
 func Scale(mat Matrix, scalar float64) Matrix {
 	rows, cols := mat.Dimensions()
 	result := New(rows, cols)
-	for r := 0; r < rows; r++ {
-		for c := 0; c < cols; c++ {
+	for c := 0; c < cols; c++ {
+		for r := 0; r < rows; r++ {
 			result.set(r, c, mat.Get(r, c)*scalar)
 		}
 	}
@@ -100,8 +100,8 @@ func Add(first Matrix, second Matrix) Matrix {
 		panic("matrix: the dimensions of the supplied matrices must be exactly equal.")
 	}
 	result := New(rows, cols)
-	for r := 0; r < rows; r++ {
-		for c := 0; c < cols; c++ {
+	for c := 0; c < cols; c++ {
+		for r := 0; r < rows; r++ {
 			result.set(r, c, first.Get(r, c)+second.Get(r, c))
 		}
 	}
