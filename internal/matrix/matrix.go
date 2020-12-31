@@ -36,6 +36,7 @@ func (m Matrix) String() string {
 		}
 	}
 
+	// TODO: Implement this in terms of Get()
 	sb := strings.Builder{}
 	for len(m.data) > 0 {
 		writeRow(m.data[0:m.cols], &sb)
@@ -79,13 +80,29 @@ func NewFromSlice(data []float64, rows, cols int) Matrix {
 }
 
 // Scale scales all of the entries in a matrix by multiplying them with the
-// provided scalar
+// provided scalar, and returns a new matrix with the result.
 func Scale(mat Matrix, scalar float64) Matrix {
 	rows, cols := mat.Dimensions()
 	result := New(rows, cols)
 	for r := 0; r < rows; r++ {
 		for c := 0; c < cols; c++ {
 			result.set(r, c, mat.Get(r, c)*scalar)
+		}
+	}
+	return result
+}
+
+// Add adds two matrices together and returns the result.
+func Add(first Matrix, second Matrix) Matrix {
+	rows, cols := first.Dimensions()
+	r, c := second.Dimensions()
+	if rows != r || cols != c {
+		panic("matrix: the dimensions of the supplied matrices must be exactly equal.")
+	}
+	result := New(rows, cols)
+	for r := 0; r < rows; r++ {
+		for c := 0; c < cols; c++ {
+			result.set(r, c, first.Get(r, c)+second.Get(r, c))
 		}
 	}
 	return result

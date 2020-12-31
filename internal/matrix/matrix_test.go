@@ -124,3 +124,50 @@ func TestScale(t *testing.T) {
 		})
 	}
 }
+
+func TestAdd(t *testing.T) {
+	tests := []struct {
+		name       string
+		rows, cols int
+		first      []float64
+		second     []float64
+	}{
+		{
+			"1x1", 1, 1, []float64{15}, []float64{10},
+		},
+		{
+			"3x1 Vector", 3, 1, []float64{15, 64, 32}, []float64{21, 32, 85},
+		},
+		{
+			"3x3 Matrix", 3, 3, []float64{1, 3, 9, 2, 4, 6, 7, 14, 21}, []float64{0, 1, 0, 1, 0, 1, 0, 1, 185},
+		},
+		{
+			"3x3 Matrix Identity", 3, 3, []float64{1, 3, 9, 2, 4, 6, 7, 14, 21}, []float64{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			m := matrix.NewFromSlice(test.first, test.rows, test.cols)
+			addend := matrix.NewFromSlice(test.second, test.rows, test.cols)
+			result := matrix.Add(m, addend)
+			for i, v := range test.first {
+				row := i / test.rows
+				col := i % test.rows
+				expected := v + addend.Get(row, col)
+				if expected != result.Get(row, col) {
+					t.Fatalf(
+						"At row %d, col %d the matrix was expected to return %f"+
+							"as prescribed in the test data (%v added to %v). "+
+							"Instead it returned %f",
+						row,
+						col,
+						expected,
+						test.first,
+						test.second,
+						result.Get(row, col),
+					)
+				}
+			}
+		})
+	}
+}
