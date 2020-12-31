@@ -7,7 +7,7 @@ import (
 	"example.com/m/internal/matrix"
 )
 
-func TestMatString(t *testing.T) {
+func TestMatrixString(t *testing.T) {
 	tests := []struct {
 		name       string
 		rows, cols int
