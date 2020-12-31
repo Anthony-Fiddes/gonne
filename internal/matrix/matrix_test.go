@@ -29,14 +29,14 @@ func TestMatrixString(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			m := matrix.New(test.rows, test.cols)
-			mString := fmt.Sprint(m)
-			if mString != test.expected {
+			result := fmt.Sprint(m)
+			if result != test.expected {
 				t.Fatalf(
 					"expected a %dx%d matrix to produce the following string:\n\n"+
 						"%s\n\ninstead it produced:\n\n%s",
 					test.rows,
 					test.cols,
-					mString,
+					result,
 					test.expected,
 				)
 			}
@@ -62,20 +62,22 @@ func TestNewFromSlice(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			result := matrix.NewFromSlice(test.data, test.rows, test.cols)
+			mat := matrix.NewFromSlice(test.data, test.rows, test.cols)
 			index := 0
 			for row := 0; row < test.rows; row++ {
 				for col := 0; col < test.cols; col++ {
-					if test.data[index] != result.Get(row, col) {
+					result := mat.Get(row, col)
+					expectedResult := test.data[index]
+					if result != expectedResult {
 						t.Fatalf(
-							"At row %d, col %d the matrix was expected to return %f"+
+							"At row %d, col %d the matrix was expected to return %f "+
 								"as prescribed in the test data (%v). Instead it "+
 								"returned %f",
 							row,
 							col,
-							test.data[index],
+							expectedResult,
 							test.data,
-							result.Get(row, col),
+							result,
 						)
 					}
 					index++
@@ -105,22 +107,23 @@ func TestScale(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			m := matrix.NewFromSlice(test.data, test.rows, test.cols)
-			result := matrix.Scale(m, test.scalar)
+			scaled := matrix.Scale(m, test.scalar)
 			index := 0
 			for row := 0; row < test.rows; row++ {
 				for col := 0; col < test.cols; col++ {
-					expected := test.data[index] * test.scalar
-					if expected != result.Get(row, col) {
+					expectedResult := test.data[index] * test.scalar
+					result := scaled.Get(row, col)
+					if result != expectedResult {
 						t.Fatalf(
-							"At row %d, col %d the matrix was expected to return %f"+
+							"At row %d, col %d the matrix was expected to return %f "+
 								"as prescribed in the test data (%v) multiplied by %f. "+
 								"Instead it returned %f",
 							row,
 							col,
-							expected,
+							expectedResult,
 							test.data,
 							test.scalar,
-							result.Get(row, col),
+							result,
 						)
 					}
 					index++
@@ -154,22 +157,23 @@ func TestAdd(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			m := matrix.NewFromSlice(test.first, test.rows, test.cols)
 			addend := matrix.NewFromSlice(test.second, test.rows, test.cols)
-			result := matrix.Add(m, addend)
+			sum := matrix.Add(m, addend)
 			index := 0
 			for row := 0; row < test.rows; row++ {
 				for col := 0; col < test.cols; col++ {
-					expected := test.first[index] + addend.Get(row, col)
-					if expected != result.Get(row, col) {
+					expectedResult := test.first[index] + addend.Get(row, col)
+					result := sum.Get(row, col)
+					if result != expectedResult {
 						t.Fatalf(
-							"At row %d, col %d the matrix was expected to return %f"+
+							"At row %d, col %d the matrix was expected to return %f "+
 								"as prescribed in the test data (%v added to %v). "+
 								"Instead it returned %f",
 							row,
 							col,
-							expected,
+							expectedResult,
 							test.first,
 							test.second,
-							result.Get(row, col),
+							result,
 						)
 					}
 					index++
@@ -207,7 +211,7 @@ func TestMatrixTranspose(t *testing.T) {
 					expectedResult := expected.Get(row, col)
 					if result != expectedResult {
 						t.Fatalf(
-							"At row %d, col %d the matrix was expected to return %f"+
+							"At row %d, col %d the matrix was expected to return %f "+
 								"as prescribed in the test data (%v). "+
 								"Instead it returned %f",
 							row,
@@ -217,6 +221,67 @@ func TestMatrixTranspose(t *testing.T) {
 							result,
 						)
 					}
+				}
+			}
+		})
+	}
+}
+
+func TestMultiply(t *testing.T) {
+	tests := []struct {
+		name       string
+		rows, cols int
+		first      []float64
+		second     []float64 // the dimensions of the second will be inverted
+		expected   []float64
+	}{
+		{
+			"1x1", 1, 1, []float64{15}, []float64{10}, []float64{150},
+		},
+		{
+			"1x3 x 3x1 Vector", 1, 3,
+			[]float64{1, 2, 3},
+			[]float64{1, 2, 3},
+			[]float64{14},
+		},
+		{
+			"3x3 Matrices", 3, 3,
+			[]float64{1, 3, 9, 2, 4, 6, 7, 14, 21},
+			[]float64{0, 1, 0, 1, 0, 0, 1, 0, 0},
+			[]float64{12, 1, 0, 10, 2, 0, 35, 7, 0},
+		},
+		{
+			"3x3 Matrix Identity", 3, 3,
+			[]float64{1, 3, 9, 2, 4, 6, 7, 14, 21},
+			[]float64{1, 0, 0, 0, 1, 0, 0, 0, 1},
+			[]float64{1, 3, 9, 2, 4, 6, 7, 14, 21},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			m := matrix.NewFromSlice(test.first, test.rows, test.cols)
+			multiplier := matrix.NewFromSlice(test.second, test.cols, test.rows)
+			result := matrix.Multiply(m, multiplier)
+			index := 0
+			// the dimensions for m x n inputs will always be n x n
+			for row := 0; row < test.rows; row++ {
+				for col := 0; col < test.rows; col++ {
+					expected := test.expected[index]
+					expectedResult := result.Get(row, col)
+					if expected != expectedResult {
+						t.Fatalf(
+							"At row %d, col %d the matrix was expected to return %f "+
+								"as prescribed in the test data (%v multiplied by %v). "+
+								"Instead it returned %f",
+							row,
+							col,
+							expected,
+							test.first,
+							test.second,
+							result.Get(row, col),
+						)
+					}
+					index++
 				}
 			}
 		})

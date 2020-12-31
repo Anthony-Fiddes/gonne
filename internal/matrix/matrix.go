@@ -149,3 +149,28 @@ func Add(first *Matrix, second *Matrix) *Matrix {
 	}
 	return result
 }
+
+// Multiply multiplies two matrices together and returns the result.
+func Multiply(first *Matrix, second *Matrix) *Matrix {
+	if first.cols != second.rows {
+		err := fmt.Errorf(
+			"matrix: the cols of the first matrix (%dx%d) "+
+				"must be equal to the rows of the second matrix (%dx%d)",
+			first.rows, first.cols, second.rows, second.cols,
+		)
+		panic(err)
+	}
+
+	result := New(first.rows, second.cols)
+	rows, cols := result.Dimensions()
+	for row := 0; row < rows; row++ {
+		for col := 0; col < cols; col++ {
+			var sum float64 = 0
+			for offset := 0; offset < first.cols; offset++ {
+				sum += first.Get(row, offset) * second.Get(offset, col)
+			}
+			result.set(row, col, sum)
+		}
+	}
+	return result
+}
