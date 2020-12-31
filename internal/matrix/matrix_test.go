@@ -63,20 +63,22 @@ func TestNewFromSlice(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			result := matrix.NewFromSlice(test.data, test.rows, test.cols)
-			for i, v := range test.data {
-				row := i / test.rows
-				col := i % test.rows
-				if v != result.Get(row, col) {
-					t.Fatalf(
-						"At row %d, col %d the matrix was expected to return %f"+
-							"as prescribed in the test data (%v). Instead it "+
-							"returned %f",
-						row,
-						col,
-						v,
-						test.data,
-						result.Get(row, col),
-					)
+			index := 0
+			for row := 0; row < test.rows; row++ {
+				for col := 0; col < test.cols; col++ {
+					if test.data[index] != result.Get(row, col) {
+						t.Fatalf(
+							"At row %d, col %d the matrix was expected to return %f"+
+								"as prescribed in the test data (%v). Instead it "+
+								"returned %f",
+							row,
+							col,
+							test.data[index],
+							test.data,
+							result.Get(row, col),
+						)
+					}
+					index++
 				}
 			}
 		})
@@ -104,21 +106,24 @@ func TestScale(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			m := matrix.NewFromSlice(test.data, test.rows, test.cols)
 			result := matrix.Scale(m, test.scalar)
-			for i, v := range test.data {
-				row := i / test.rows
-				col := i % test.rows
-				if v*test.scalar != result.Get(row, col) {
-					t.Fatalf(
-						"At row %d, col %d the matrix was expected to return %f"+
-							"as prescribed in the test data (%v) multiplied by %f. "+
-							"Instead it returned %f",
-						row,
-						col,
-						v*test.scalar,
-						test.data,
-						test.scalar,
-						result.Get(row, col),
-					)
+			index := 0
+			for row := 0; row < test.rows; row++ {
+				for col := 0; col < test.cols; col++ {
+					expected := test.data[index] * test.scalar
+					if expected != result.Get(row, col) {
+						t.Fatalf(
+							"At row %d, col %d the matrix was expected to return %f"+
+								"as prescribed in the test data (%v) multiplied by %f. "+
+								"Instead it returned %f",
+							row,
+							col,
+							expected,
+							test.data,
+							test.scalar,
+							result.Get(row, col),
+						)
+					}
+					index++
 				}
 			}
 		})
@@ -150,22 +155,68 @@ func TestAdd(t *testing.T) {
 			m := matrix.NewFromSlice(test.first, test.rows, test.cols)
 			addend := matrix.NewFromSlice(test.second, test.rows, test.cols)
 			result := matrix.Add(m, addend)
-			for i, v := range test.first {
-				row := i / test.rows
-				col := i % test.rows
-				expected := v + addend.Get(row, col)
-				if expected != result.Get(row, col) {
-					t.Fatalf(
-						"At row %d, col %d the matrix was expected to return %f"+
-							"as prescribed in the test data (%v added to %v). "+
-							"Instead it returned %f",
-						row,
-						col,
-						expected,
-						test.first,
-						test.second,
-						result.Get(row, col),
-					)
+			index := 0
+			for row := 0; row < test.rows; row++ {
+				for col := 0; col < test.cols; col++ {
+					expected := test.first[index] + addend.Get(row, col)
+					if expected != result.Get(row, col) {
+						t.Fatalf(
+							"At row %d, col %d the matrix was expected to return %f"+
+								"as prescribed in the test data (%v added to %v). "+
+								"Instead it returned %f",
+							row,
+							col,
+							expected,
+							test.first,
+							test.second,
+							result.Get(row, col),
+						)
+					}
+					index++
+				}
+			}
+		})
+	}
+}
+
+func TestMatrixTranspose(t *testing.T) {
+	tests := []struct {
+		name       string
+		rows, cols int
+		data       []float64
+		expected   []float64
+	}{
+		{
+			"1x1", 1, 1, []float64{15}, []float64{15},
+		},
+		{
+			"3x1 Vector", 3, 1, []float64{15, 64, 32}, []float64{15, 64, 32},
+		},
+		{
+			"3x3 Matrix", 3, 3, []float64{1, 3, 9, 2, 4, 6, 7, 14, 21}, []float64{1, 2, 7, 3, 4, 14, 9, 6, 21},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			m := matrix.NewFromSlice(test.data, test.rows, test.cols)
+			expected := matrix.NewFromSlice(test.expected, test.cols, test.rows)
+			transpose := m.Transpose()
+			for row := 0; row < test.cols; row++ {
+				for col := 0; col < test.rows; col++ {
+					result := transpose.Get(row, col)
+					expectedResult := expected.Get(row, col)
+					if result != expectedResult {
+						t.Fatalf(
+							"At row %d, col %d the matrix was expected to return %f"+
+								"as prescribed in the test data (%v). "+
+								"Instead it returned %f",
+							row,
+							col,
+							expectedResult,
+							test.data,
+							result,
+						)
+					}
 				}
 			}
 		})
