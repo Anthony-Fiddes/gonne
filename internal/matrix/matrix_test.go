@@ -287,3 +287,48 @@ func TestMultiply(t *testing.T) {
 		})
 	}
 }
+
+func TestMap(t *testing.T) {
+	tests := []struct {
+		name       string
+		rows, cols int
+		data       []float64
+		function   func(float64) float64
+	}{
+		{
+			"1x1", 1, 1, []float64{15}, func(x float64) float64 { return x * 2 },
+		},
+		{
+			"3x1 Vector", 3, 1, []float64{15, 64, 32}, func(x float64) float64 { return x * 3.15 },
+		},
+		{
+			"3x3 Matrix", 3, 3, []float64{1, 3, 9, 2, 4, 6, 7, 14, 21}, func(x float64) float64 { return x * 1.28 },
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			m := matrix.NewFromSlice(test.data, test.rows, test.cols)
+			mapped := matrix.Map(m, test.function)
+			index := 0
+			for row := 0; row < test.rows; row++ {
+				for col := 0; col < test.cols; col++ {
+					expectedResult := test.function(test.data[index])
+					result := mapped.Get(row, col)
+					if result != expectedResult {
+						t.Fatalf(
+							"At row %d, col %d the matrix was expected to return %f "+
+								"as prescribed in the test data (%v)."+
+								"Instead it returned %f",
+							row,
+							col,
+							expectedResult,
+							test.data,
+							result,
+						)
+					}
+					index++
+				}
+			}
+		})
+	}
+}

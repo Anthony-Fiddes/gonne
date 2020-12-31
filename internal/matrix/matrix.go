@@ -73,7 +73,6 @@ func (m *Matrix) String() string {
 
 // Transpose generates a Matrix's transpose if it has not already been generated
 func (m *Matrix) Transpose() *Matrix {
-	// TODO: Add testing
 	if m.transpose != nil {
 		return m.transpose
 	}
@@ -170,6 +169,18 @@ func Multiply(first *Matrix, second *Matrix) *Matrix {
 				sum += first.Get(row, offset) * second.Get(offset, col)
 			}
 			result.set(row, col, sum)
+		}
+	}
+	return result
+}
+
+// Map runs the given function on every entry in the matrix and returns the result
+func Map(mat *Matrix, function func(float64) float64) *Matrix {
+	rows, cols := mat.Dimensions()
+	result := New(rows, cols)
+	for r := 0; r < rows; r++ {
+		for c := 0; c < cols; c++ {
+			result.set(r, c, function(mat.Get(r, c)))
 		}
 	}
 	return result
