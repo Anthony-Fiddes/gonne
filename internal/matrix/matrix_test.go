@@ -62,11 +62,11 @@ func TestNewFromSlice(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			m := matrix.NewFromSlice(test.data, test.rows, test.cols)
+			result := matrix.NewFromSlice(test.data, test.rows, test.cols)
 			for i, v := range test.data {
 				row := i / test.rows
 				col := i % test.rows
-				if v != m.Get(row, col) {
+				if v != result.Get(row, col) {
 					t.Fatalf(
 						"At row %d, col %d the matrix was expected to return %f"+
 							"as prescribed in the test data (%v). Instead it "+
@@ -75,7 +75,49 @@ func TestNewFromSlice(t *testing.T) {
 						col,
 						v,
 						test.data,
-						m.Get(row, col),
+						result.Get(row, col),
+					)
+				}
+			}
+		})
+	}
+}
+
+func TestScale(t *testing.T) {
+	tests := []struct {
+		name       string
+		rows, cols int
+		data       []float64
+		scalar     float64
+	}{
+		{
+			"1x1", 1, 1, []float64{15}, 2,
+		},
+		{
+			"3x1 Vector", 3, 1, []float64{15, 64, 32}, 3.15,
+		},
+		{
+			"3x3 Matrix", 3, 3, []float64{1, 3, 9, 2, 4, 6, 7, 14, 21}, 1.28,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			m := matrix.NewFromSlice(test.data, test.rows, test.cols)
+			result := matrix.Scale(m, test.scalar)
+			for i, v := range test.data {
+				row := i / test.rows
+				col := i % test.rows
+				if v*test.scalar != result.Get(row, col) {
+					t.Fatalf(
+						"At row %d, col %d the matrix was expected to return %f"+
+							"as prescribed in the test data (%v) multiplied by %f. "+
+							"Instead it returned %f",
+						row,
+						col,
+						v*test.scalar,
+						test.data,
+						test.scalar,
+						result.Get(row, col),
 					)
 				}
 			}
