@@ -13,8 +13,31 @@ type Matrix struct {
 	transpose  *Matrix
 }
 
+func (m *Matrix) accessCheck(row, col int) {
+	if row < 0 || col < 0 {
+		err := fmt.Errorf(
+			"matrix: row and col (%d, %d) cannot be less than 0",
+			row,
+			col,
+		)
+		panic(err)
+	}
+	if row >= m.rows || col >= m.cols {
+		err := fmt.Errorf(
+			"matrix: row and col (%d, %d) "+
+				"cannot be greater than or equal to the matrix's dimensions (%dx%d)",
+			row,
+			col,
+			m.rows,
+			m.cols,
+		)
+		panic(err)
+	}
+}
+
 // Get returns the float64 value at the given row and column
 func (m *Matrix) Get(row, col int) float64 {
+	m.accessCheck(row, col)
 	return m.data[m.cols*row+col]
 }
 
@@ -24,6 +47,7 @@ func (m *Matrix) Dimensions() (rows, cols int) {
 }
 
 func (m *Matrix) set(row, col int, value float64) {
+	m.accessCheck(row, col)
 	m.data[m.cols*row+col] = value
 }
 
@@ -102,8 +126,8 @@ func NewFromSlice(data []float64, rows, cols int) *Matrix {
 func Scale(mat *Matrix, scalar float64) *Matrix {
 	rows, cols := mat.Dimensions()
 	result := New(rows, cols)
-	for c := 0; c < cols; c++ {
-		for r := 0; r < rows; r++ {
+	for r := 0; r < rows; r++ {
+		for c := 0; c < cols; c++ {
 			result.set(r, c, mat.Get(r, c)*scalar)
 		}
 	}
@@ -118,8 +142,8 @@ func Add(first *Matrix, second *Matrix) *Matrix {
 		panic("matrix: the dimensions of the supplied matrices must be exactly equal.")
 	}
 	result := New(rows, cols)
-	for c := 0; c < cols; c++ {
-		for r := 0; r < rows; r++ {
+	for r := 0; r < rows; r++ {
+		for c := 0; c < cols; c++ {
 			result.set(r, c, first.Get(r, c)+second.Get(r, c))
 		}
 	}
