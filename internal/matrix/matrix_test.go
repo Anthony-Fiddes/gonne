@@ -7,7 +7,7 @@ import (
 	"example.com/m/internal/matrix"
 )
 
-func TestBasicString(t *testing.T) {
+func TestMatString(t *testing.T) {
 	tests := []struct {
 		name       string
 		rows, cols int
@@ -28,7 +28,7 @@ func TestBasicString(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			m := matrix.NewBasic(test.rows, test.cols)
+			m := matrix.New(test.rows, test.cols)
 			mString := fmt.Sprint(m)
 			if mString != test.expected {
 				t.Fatalf(
@@ -44,7 +44,7 @@ func TestBasicString(t *testing.T) {
 	}
 }
 
-func TestNewBasicFromSlice(t *testing.T) {
+func TestNewFromSlice(t *testing.T) {
 	tests := []struct {
 		name       string
 		rows, cols int
@@ -62,7 +62,7 @@ func TestNewBasicFromSlice(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			m := matrix.NewBasicFromSlice(test.data, test.rows, test.cols)
+			m := matrix.NewFromSlice(test.data, test.rows, test.cols)
 			for i, v := range test.data {
 				row := i / test.rows
 				col := i % test.rows

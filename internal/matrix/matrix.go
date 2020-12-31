@@ -6,52 +6,22 @@ import (
 	"strings"
 )
 
-// Matrix is an interface that describes the fundamental methods for doing
-// matrix operations.
-type Matrix interface {
-	// Cols returns the number of columns
-	Cols() int
-	// Rows returns the number of rows
-	Rows() int
-	// Get returns the float64 value at the given row and column
-	Get(row, col int) float64
-}
-
-// Transposable is an interface that describes a matrix which can supply its
-// own transpose.
-type Transposable interface {
-	// T returns the transpose of the matrix
-	T() Matrix
-	Matrix
-}
-
-// Basic is a basic implementation of a matrix.
-type Basic struct {
-	cols int
-	rows int
-	data []float64
-}
-
-// Cols returns the number of columns
-func (b Basic) Cols() int {
-	return b.cols
-}
-
-// Rows returns the number of rows
-func (b Basic) Rows() int {
-	return b.rows
+// Mat is a basic implementation of a matrix.
+type Mat struct {
+	rows, cols int
+	data       []float64
 }
 
 // Get returns the float64 value at the given row and column
-func (b Basic) Get(row, col int) float64 {
+func (b Mat) Get(row, col int) float64 {
 	return b.data[b.cols*row+col]
 }
 
-func (b Basic) set(row, col int, value float64) {
+func (b Mat) set(row, col int, value float64) {
 	b.data[b.cols*row+col] = value
 }
 
-func (b Basic) String() string {
+func (b Mat) String() string {
 	writeRow := func(row []float64, sb *strings.Builder) {
 		for i, v := range row {
 			sb.WriteString(fmt.Sprint(v))
@@ -76,19 +46,19 @@ func dimCheck(rows, cols int) {
 	}
 }
 
-// NewBasic returns a Basic matrix with all values set to 0
+// New returns a matrix with all values set to 0
 //
 // Will panic if rows or cols is less than or equal to 0
-func NewBasic(rows, cols int) *Basic {
+func New(rows, cols int) *Mat {
 	dimCheck(rows, cols)
-	b := &Basic{rows: rows, cols: cols}
+	b := &Mat{rows: rows, cols: cols}
 	b.data = make([]float64, rows*cols)
 	return b
 }
 
-// NewBasicFromSlice returns a Basic matrix with all values imported from the
+// NewFromSlice returns a matrix with all values imported from the
 // supplied slice
-func NewBasicFromSlice(data []float64, rows, cols int) *Basic {
+func NewFromSlice(data []float64, rows, cols int) *Mat {
 	dimCheck(rows, cols)
 	if len(data) != rows*cols {
 		err := fmt.Errorf(
@@ -99,6 +69,6 @@ func NewBasicFromSlice(data []float64, rows, cols int) *Basic {
 		)
 		panic(err)
 	}
-	b := &Basic{rows: rows, cols: cols, data: data}
+	b := &Mat{rows: rows, cols: cols, data: data}
 	return b
 }
