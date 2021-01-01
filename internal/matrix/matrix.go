@@ -3,7 +3,14 @@ package matrix
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
+)
+
+const seed = 0
+
+var (
+	random = rand.New(rand.NewSource(seed))
 )
 
 // Matrix is a basic implementation of a matrix.
@@ -118,6 +125,16 @@ func NewFromSlice(data []float64, rows, cols int) *Matrix {
 	}
 	b := &Matrix{rows: rows, cols: cols, data: data}
 	return b
+}
+
+// NewRandomNormal returns a matrix with all values sourced from Go's math/rand.NormFloat64
+func NewRandomNormal(rows, cols int) *Matrix {
+	// TODO: Find a way to test this?
+	data := make([]float64, rows*cols)
+	for i := range data {
+		data[i] = random.NormFloat64()
+	}
+	return NewFromSlice(data, rows, cols)
 }
 
 // Scale scales all of the entries in a matrix by multiplying them with the
