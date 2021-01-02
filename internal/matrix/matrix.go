@@ -179,11 +179,12 @@ func Multiply(first *Matrix, second *Matrix) *Matrix {
 
 	result := New(first.rows, second.cols)
 	rows, cols := result.Dimensions()
+	trans := second.Transpose()
 	for row := 0; row < rows; row++ {
 		for col := 0; col < cols; col++ {
 			var sum float64 = 0
 			for offset := 0; offset < first.cols; offset++ {
-				sum += first.Get(row, offset) * second.Get(offset, col)
+				sum += first.Get(row, offset) * trans.Get(col, offset)
 			}
 			result.set(row, col, sum)
 		}

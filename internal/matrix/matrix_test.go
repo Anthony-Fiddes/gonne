@@ -251,9 +251,15 @@ func TestMultiply(t *testing.T) {
 			[]float64{12, 1, 0, 10, 2, 0, 35, 7, 0},
 		},
 		{
-			"3x3 Matrix Identity", 3, 3,
+			"3x3 Matrix Right Identity", 3, 3,
 			[]float64{1, 3, 9, 2, 4, 6, 7, 14, 21},
 			[]float64{1, 0, 0, 0, 1, 0, 0, 0, 1},
+			[]float64{1, 3, 9, 2, 4, 6, 7, 14, 21},
+		},
+		{
+			"3x3 Matrix Left Identity", 3, 3,
+			[]float64{1, 0, 0, 0, 1, 0, 0, 0, 1},
+			[]float64{1, 3, 9, 2, 4, 6, 7, 14, 21},
 			[]float64{1, 3, 9, 2, 4, 6, 7, 14, 21},
 		},
 	}
