@@ -114,6 +114,12 @@ func New(rows, cols int) *Matrix {
 // NewFromSlice returns a matrix with all values imported from the
 // supplied slice
 func NewFromSlice(data []float64, rows, cols int) *Matrix {
+	matData := make([]float64, len(data))
+	copy(matData, data)
+	return newFromSlice(matData, rows, cols)
+}
+
+func newFromSlice(data []float64, rows, cols int) *Matrix {
 	dimCheck(rows, cols)
 	if len(data) != rows*cols {
 		err := fmt.Errorf(
@@ -124,10 +130,8 @@ func NewFromSlice(data []float64, rows, cols int) *Matrix {
 		)
 		panic(err)
 	}
-	matData := make([]float64, len(data))
-	copy(matData, data)
-	b := &Matrix{rows: rows, cols: cols, data: matData}
-	return b
+	m := &Matrix{rows: rows, cols: cols, data: data}
+	return m
 }
 
 // NewRandomNormal returns a matrix with all values sourced from Go's math/rand.NormFloat64
@@ -137,7 +141,7 @@ func NewRandomNormal(rows, cols int) *Matrix {
 	for i := range data {
 		data[i] = random.NormFloat64()
 	}
-	return NewFromSlice(data, rows, cols)
+	return newFromSlice(data, rows, cols)
 }
 
 // Scale scales all of the entries in a matrix by multiplying them with the
