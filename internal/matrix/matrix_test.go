@@ -85,6 +85,15 @@ func TestNewFromSlice(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("Is not mutable", func(t *testing.T) {
+		data := []float64{1}
+		mat := matrix.NewFromSlice(data, 1, 1)
+		data[0] = 2
+		if mat.Get(0, 0) == data[0] {
+			t.Fatalf("This implementation of Matrix's backing slice is accessible")
+		}
+	})
 }
 
 func TestScale(t *testing.T) {

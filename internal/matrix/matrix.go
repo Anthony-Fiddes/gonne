@@ -124,7 +124,9 @@ func NewFromSlice(data []float64, rows, cols int) *Matrix {
 		)
 		panic(err)
 	}
-	b := &Matrix{rows: rows, cols: cols, data: data}
+	matData := make([]float64, len(data))
+	copy(matData, data)
+	b := &Matrix{rows: rows, cols: cols, data: matData}
 	return b
 }
 
