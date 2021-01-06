@@ -70,9 +70,10 @@ func (m *Matrix) String() string {
 
 	// TODO: Implement this in terms of Get()
 	sb := strings.Builder{}
-	for len(m.data) > 0 {
-		writeRow(m.data[0:m.cols], &sb)
-		m.data = m.data[m.cols:]
+	data := m.data
+	for len(data) > 0 {
+		writeRow(data[:m.cols], &sb)
+		data = data[m.cols:]
 		sb.WriteRune('\n')
 	}
 	return sb.String()[0 : sb.Len()-1]
