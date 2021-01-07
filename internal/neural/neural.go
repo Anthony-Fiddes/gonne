@@ -4,7 +4,7 @@
 // networks. 3Blue1Brown is also a great channel to reference.
 package neural
 
-import "example.com/m/internal/matrix"
+import "github.com/Anthony-Fiddes/gonne/internal/matrix"
 
 // Network represents a neural network
 type Network struct {

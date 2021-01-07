@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"example.com/m/internal/matrix"
+	"github.com/Anthony-Fiddes/gonne/internal/matrix"
 )
 
 func TestMatrixString(t *testing.T) {

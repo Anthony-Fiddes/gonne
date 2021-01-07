@@ -4,8 +4,8 @@ import (
 	"math"
 	"testing"
 
-	"example.com/m/internal/matrix"
-	"example.com/m/internal/neural"
+	"github.com/Anthony-Fiddes/gonne/internal/matrix"
+	"github.com/Anthony-Fiddes/gonne/internal/neural"
 )
 
 func sigmoid(x float64) float64 {
