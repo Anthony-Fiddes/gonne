@@ -26,10 +26,11 @@ const (
 // Set is an MNIST set of images and labels
 type Set struct {
 	Labels []byte
-	Images []image
+	Images []Image
 }
 
-type image struct {
+// Image is an MNIST image
+type Image struct {
 	Rows   int32
 	Cols   int32
 	Pixels []byte
@@ -71,4 +72,42 @@ func readLabels(r io.Reader) ([]byte, error) {
 		return nil, fmt.Errorf(unxepectedReadErr, err)
 	}
 	return labels, nil
+}
+
+func readImages(r io.Reader) ([]Image, error) {
+	magic, size, err := readHeader(r)
+	if err != nil {
+		return nil, fmt.Errorf(unxepectedReadErr, err)
+	}
+	if magic != imageMagicNumber {
+		return nil, ErrInvalidMagicNumber
+	}
+
+	imageHeader := struct {
+		Rows int32
+		Cols int32
+	}{}
+	readImage := func() (Image, error) {
+		err = binary.Read(r, byteOrder, &imageHeader)
+		if err != nil {
+			return Image{}, err
+		}
+
+		pixels := make([]byte, int(imageHeader.Rows*imageHeader.Cols))
+		err = binary.Read(r, byteOrder, pixels)
+		if err != nil {
+			return Image{}, err
+		}
+		return Image{imageHeader.Rows, imageHeader.Cols, pixels}, nil
+	}
+
+	images := make([]Image, 0, size)
+	for i := 0; i < int(size); i++ {
+		image, err := readImage()
+		if err != nil {
+			return nil, fmt.Errorf(unxepectedReadErr, err)
+		}
+		images = append(images, image)
+	}
+	return images, nil
 }
