@@ -44,20 +44,28 @@ var (
 	byteOrder = binary.BigEndian
 )
 
-func readLabels(r io.Reader) ([]byte, error) {
+func readHeader(r io.Reader) (magic, size int32, err error) {
 	header := struct {
 		Magic int32
 		Size  int32
 	}{}
-	err := binary.Read(r, byteOrder, &header)
+	err = binary.Read(r, byteOrder, &header)
+	if err != nil {
+		return 0, 0, err
+	}
+	return header.Magic, header.Size, nil
+}
+
+func readLabels(r io.Reader) ([]byte, error) {
+	magic, size, err := readHeader(r)
 	if err != nil {
 		return nil, fmt.Errorf(unxepectedReadErr, err)
 	}
-	if header.Magic != labelMagicNumber {
+	if magic != labelMagicNumber {
 		return nil, ErrInvalidMagicNumber
 	}
 
-	labels := make([]byte, header.Size)
+	labels := make([]byte, size)
 	err = binary.Read(r, byteOrder, labels)
 	if err != nil {
 		return nil, fmt.Errorf(unxepectedReadErr, err)
