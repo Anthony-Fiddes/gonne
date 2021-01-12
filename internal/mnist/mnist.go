@@ -20,7 +20,6 @@ const ErrInvalidMagicNumber errorString = "mnist: invalid magic number"
 
 const (
 	unxepectedReadErr = "mnist: unexpected error while reading: %w"
-	initErr           = "mnist: unexpected error while setting magic numbers: %w"
 )
 
 // Set is an MNIST set of images and labels
