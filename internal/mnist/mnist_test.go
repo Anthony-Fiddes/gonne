@@ -124,7 +124,7 @@ func TestImageGet(t *testing.T) {
 			result := test.Image.Get(test.Row, test.Col)
 			if result != test.Expected {
 				t.Fatalf(
-					"Expected the Image.At() method to return %d, instead it returned %d",
+					"Expected the Image.Get() method to return %d, instead it returned %d",
 					test.Expected,
 					result,
 				)
