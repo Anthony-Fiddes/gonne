@@ -7,16 +7,16 @@ import (
 	"io"
 )
 
-// Error represents an error in reading mnist data
-type Error string
+// errorString represents an error in reading mnist data
+type errorString string
 
-func (e Error) Error() string {
+func (e errorString) Error() string {
 	return string(e)
 }
 
 // ErrInvalidMagicNumber specifies that the data being read did not have the
 // correct magic number.
-const ErrInvalidMagicNumber Error = "mnist: invalid magic number"
+const ErrInvalidMagicNumber errorString = "mnist: invalid magic number"
 
 const (
 	unxepectedReadErr = "mnist: unexpected error while reading: %w"
