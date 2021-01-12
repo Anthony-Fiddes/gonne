@@ -36,6 +36,11 @@ type Image struct {
 	Pixels []byte
 }
 
+// Get returns the pixel at the given row and column
+func (i *Image) Get(row, col int) byte {
+	return i.Pixels[int(i.Cols)*row+col]
+}
+
 const (
 	labelMagicNumber int32 = 0x801
 	imageMagicNumber int32 = 0x803

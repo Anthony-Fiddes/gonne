@@ -73,3 +73,62 @@ func TestReadImages(t *testing.T) {
 		}
 	}
 }
+
+func TestImageGet(t *testing.T) {
+	tests := []struct {
+		Name     string
+		Image    Image
+		Row      int
+		Col      int
+		Expected byte
+	}{
+		{
+			"1x1 Row 0 Col 0",
+			Image{1, 1, []byte{0}},
+			0,
+			0,
+			0,
+		},
+		{
+			"2x2 Row 0 Col 0",
+			Image{2, 2, []byte{1, 2, 3, 4}},
+			0,
+			0,
+			1,
+		},
+		{
+			"2x2 Row 0 Col 1",
+			Image{2, 2, []byte{1, 2, 3, 4}},
+			0,
+			1,
+			2,
+		},
+		{
+			"2x2 Row 1 Col 0",
+			Image{2, 2, []byte{1, 2, 3, 4}},
+			1,
+			0,
+			3,
+		},
+		{
+			"2x2 Row 1 Col 1",
+			Image{2, 2, []byte{1, 2, 3, 4}},
+			1,
+			1,
+			4,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.Name, func(t *testing.T) {
+			result := test.Image.Get(test.Row, test.Col)
+			if result != test.Expected {
+				t.Fatalf(
+					"Expected the Image.At() method to return %d, instead it returned %d",
+					test.Expected,
+					result,
+				)
+			}
+		})
+	}
+}
