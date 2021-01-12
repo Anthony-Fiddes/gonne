@@ -43,7 +43,7 @@ func TestReadLabels(t *testing.T) {
 	expected := digits()
 	testLabelSet := createTestLabelData(expected)
 
-	labels, err := readLabels(testLabelSet)
+	labels, err := ReadLabels(testLabelSet)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +62,7 @@ func TestReadImages(t *testing.T) {
 	}
 	testImageSet := createTestImageData(expected)
 
-	images, err := readImages(testImageSet)
+	images, err := ReadImages(testImageSet)
 	if err != nil {
 		t.Fatal(err)
 	}

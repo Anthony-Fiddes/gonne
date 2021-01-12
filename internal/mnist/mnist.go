@@ -1,4 +1,4 @@
-// Package mnist provides functions to easily import mnist image set data
+// Package mnist provides functions to easily import mnist data
 package mnist
 
 import (
@@ -57,7 +57,8 @@ func readHeader(r io.Reader) (magic, size int32, err error) {
 	return header.Magic, header.Size, nil
 }
 
-func readLabels(r io.Reader) ([]byte, error) {
+// ReadLabels reads the labels file of an MNIST data set
+func ReadLabels(r io.Reader) ([]byte, error) {
 	magic, size, err := readHeader(r)
 	if err != nil {
 		return nil, fmt.Errorf(unxepectedReadErr, err)
@@ -74,7 +75,8 @@ func readLabels(r io.Reader) ([]byte, error) {
 	return labels, nil
 }
 
-func readImages(r io.Reader) ([]Image, error) {
+// ReadImages reads the images file of an MNIST data set
+func ReadImages(r io.Reader) ([]Image, error) {
 	magic, size, err := readHeader(r)
 	if err != nil {
 		return nil, fmt.Errorf(unxepectedReadErr, err)
